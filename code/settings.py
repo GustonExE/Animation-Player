@@ -13,6 +13,9 @@ def clamp(value, min_value, max_value):
 def lerp(start, end, t):
     return start + (end - start) * clamp(t, 0, 1)
 
+def is_empty(obj):
+    return isinstance(obj, (list, tuple, dict, set)) and len(obj) == 0
+
 # Timer 
 class Timer:
     def __init__(self, duration: int, repeat = False, autostart = False, func = None):
