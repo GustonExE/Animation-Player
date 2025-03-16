@@ -6,12 +6,6 @@ set_target_fps(framerate)
 
 pos = Vector2(screen_width / 2 - 60, screen_height / 2 - 80)
 
-def print_falling():
-    print('falling')
-
-def print_idling():
-    print("idling")
-
 default_animation = "idle"
 
 gui_set_style(DEFAULT, TEXT_SIZE, 24)
@@ -24,6 +18,13 @@ animations = {
     "jump": Animation(spritesheet, 12, 14, False, speed=8),
     "fall": Animation(spritesheet, 15, 16, False, speed=6)
 }
+
+fall_callbacks = {
+    "falling": Callback(animations["fall"].end_frame, print, "FALLING")
+}
+
+animations["fall"].callbacks = fall_callbacks
+
 animation_player = AnimationPlayer(animations, default_animation)
 
 current_animation = animation_player.current_animation
@@ -62,4 +63,5 @@ while not window_should_close():
     draw_fps(10, 10)
     end_drawing()
 
+animation_player.destroy()
 close_window()
