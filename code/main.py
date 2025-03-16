@@ -10,7 +10,7 @@ default_animation = "idle"
 
 gui_set_style(DEFAULT, TEXT_SIZE, 24)
 
-spritesheet = Spritesheet("./assets/ivy.png", pos, 8, 17, 1, Vector2(0, 0))
+spritesheet = Spritesheet("./assets/ivy.png", pos, Vector2(8, 8), 17, 1, Vector2(0, 0))
 
 animations = {
     "idle": Animation(spritesheet, 0, 3, True, speed=10),

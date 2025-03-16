@@ -23,10 +23,10 @@ class ResourceManager:
 
 # Handles spritesheets and extracting specific frames
 class Spritesheet:
-    def __init__(self, filename, pos, scale, frame_h, frame_v, current_frame: Vector2):
+    def __init__(self, filename, pos, scale: Vector2, frame_h, frame_v, current_frame: Vector2):
         self.filename = filename
         self.pos = pos  # Position on screen
-        self.scale = scale  # Scaling factor
+        self.scale = Vector2(scale.x, scale.y)  # Scaling factor
         self.frame = current_frame  # Current frame in the spritesheet
         self.frame_h = frame_h  # Total horizontal frames
         self.frame_v = frame_v  # Total vertical frames
@@ -34,20 +34,23 @@ class Spritesheet:
         
         # Define the section of the spritesheet to display
         self.rect = Rectangle(
-            self.frame.x * self.texture.width / self.frame_h, 
-            self.frame.y * self.texture.height / self.frame_v, 
-            self.texture.width / self.frame_h, 
-            self.texture.height / self.frame_v
+            self.frame.x * (self.texture.width / self.frame_h), 
+            self.frame.y * (self.texture.height / self.frame_v), 
+            (self.texture.width / self.frame_h), 
+            (self.texture.height / self.frame_v)
         )
+        self.sprite_box = Rectangle(self.pos.x, self.pos.y, self.rect.width * self.scale.x, self.rect.height * self.scale.y)
         
     def destroy(self):
         ResourceManager.unload_texture(self.filename)  # Unload texture
     
     def draw(self):
+        self.sprite_box.x = self.pos.x
+        self.sprite_box.y = self.pos.y
+        
         # Draw the selected frame at the specified position with scaling
         draw_texture_pro(
-            self.texture, self.rect, 
-            Rectangle(self.pos.x, self.pos.y, self.rect.width * self.scale, self.rect.height * self.scale), 
+            self.texture, self.rect, self.sprite_box, 
             Vector2(0, 0), 0, WHITE
         )
 
@@ -92,6 +95,9 @@ class Animation:
         self.current_frame = getattr(self.spritesheet.frame, self.frame_attr)
         self.spritesheet.rect.x = self.spritesheet.frame.x * (self.spritesheet.texture.width / self.spritesheet.frame_h)
         self.spritesheet.rect.y = self.spritesheet.frame.y * (self.spritesheet.texture.height / self.spritesheet.frame_v)
+        # Sync sprite_box with pos
+        self.spritesheet.sprite_box.x = self.spritesheet.pos.x
+        self.spritesheet.sprite_box.y = self.spritesheet.pos.y
         
     def animate(self):
         # Check if enough time has passed for the next frame
