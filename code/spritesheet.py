@@ -48,7 +48,6 @@ class Animation:
         self.animate()
         
         self.current_frame = getattr(self.spritesheet.frame, self.frame_attr)
-        print(self.initial_frame)
         
         self.spritesheet.rect.x = self.spritesheet.frame.x * (self.spritesheet.image.width / self.spritesheet.frame_h)
         self.spritesheet.rect.y = self.spritesheet.frame.y * (self.spritesheet.image.height / self.spritesheet.frame_v)
@@ -75,11 +74,17 @@ class Animation:
         self.frame_counter += 1
 
 
-
-
-
     def set_speed(self, new_speed):
         self.speed = new_speed
+    
+    def set_loop(self, loop):
+        self.loop = loop
+        
+    def set_reversed(self, reverse):
+        self.reverse = reverse
+    
+    def set_animation_vertical(self, vertical_anim):
+        self.vertical_anim = vertical_anim
 
     def reset(self):
         setattr(self.spritesheet.frame, self.frame_attr, self.start_frame)
@@ -100,7 +105,10 @@ class Animation:
 class AnimationPlayer:
     def __init__(self, animation_dict, default_animation):
         self.animation_dict = animation_dict
-        self.current_animation = self.animation_dict[default_animation]
+        self.default_animation = default_animation
+        self.current_animation = self.animation_dict[self.default_animation]
+        self.play(self.default_animation)
+        
 
     def play(self, animation_name):
         if animation_name in self.animation_dict:
@@ -112,80 +120,3 @@ class AnimationPlayer:
         self.current_animation.draw()    # Draw the updated frame
 
         
-# class AnimationPlayer:              
-#     def __init__(self, spritesheet, animation_dict: dict, default_animation: str, callbacks: dict):
-#         self.spritesheet = spritesheet
-#         self.current_animation = default_animation
-#         self.animation_dict = animation_dict
-#         self.animation = self.animation_dict[self.current_animation]
-#         self.starting_frame = self.animation.start_frame
-#         self.ending_frame = self.animation.end_frame
-#         self.speed = self.animation.speed
-#         self.callbacks = callbacks
-#         self.vertical_anim = self.animation.vertical_anim
-#         self.loop = self.animation.loop
-#         self.reverse = self.animation.reverse
-#         self.spritesheet.frame = Vector2(self.starting_frame, self.spritesheet.frame.y)
-#         self.frame_counter = 0
-#         self.frame_attr = 'y' if self.vertical_anim else 'x'
-        
-#     def update(self):
-#         self.play(self.current_animation)
-#         self.animate()
-#         self.handle_callbacks()
-#         self.frame_counter += 1
-#         self.spritesheet.rect.x = self.spritesheet.frame.x * (self.spritesheet.image.width / self.spritesheet.frame_h)
-#         self.spritesheet.rect.y = self.spritesheet.frame.y * (self.spritesheet.image.height / self.spritesheet.frame_v)
-    
-#     def handle_callbacks(self):
-        
-#             if self.current_animation in self.callbacks:
-#                 if getattr(self.spritesheet.frame, self.frame_attr) == self.callbacks[self.current_animation]["frame"]:
-#                     self.callbacks[self.current_animation]['callback']()
-    
-#     def animate(self):
-#         if self.frame_counter >= (framerate / self.speed):
-#             step = -1 if self.reverse else 1
-#             setattr(self.spritesheet.frame, self.frame_attr, getattr(self.spritesheet.frame, self.frame_attr) + step)
-#             if self.animation_finished(): 
-#                 if self.loop:
-#                     setattr(self.spritesheet.frame, self.frame_attr, self.starting_frame)
-#                 else:
-#                     setattr(self.spritesheet.frame, self.frame_attr, self.ending_frame)
-#             self.frame_counter = 0
-  
-#     def play(self, animation):
-#         if animation != self.current_animation:
-#             self.current_animation = animation
-#             self.animation = self.animation_dict[animation]
-#             self.starting_frame = self.animation.start_frame
-#             self.ending_frame = self.animation.end_frame
-#             self.speed = self.animation.speed
-#             self.reverse = self.animation.reverse
-#             self.loop = self.animation.loop
-#             self.vertical_anim = self.animation.vertical_anim
-#             self.frame_attr = 'y' if self.vertical_anim else 'x'
-            
-            
-#             if self.reverse:
-#                 self.starting_frame = self.ending_frame
-#             if self.vertical_anim:
-#                 self.spritesheet.frame.y = self.starting_frame
-#             else:
-#                 self.spritesheet.frame.x = self.starting_frame
-#             self.frame_counter = 0
-
-#     def set_speed(self, new_speed):
-#         self.speed = new_speed
-
-#     def animation_finished(self):
-#         if self.reverse:
-#             return getattr(self.spritesheet.frame, self.frame_attr) <= self.ending_frame
-#         return getattr(self.spritesheet.frame, self.frame_attr) >= self.ending_frame
-        
-#     def draw(self):
-#         self.spritesheet.draw()
-    
-#     def run(self):
-#         self.update()
-#         self.draw()
